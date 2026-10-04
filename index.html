@@ -10,11 +10,20 @@
 
   <body>
     <main id="app">
-      <section class="empty">
+      <section class="empty" id="empty">
         <h1>Convert images to PDF</h1>
         <p>Drop photos here</p>
         <span class="or">or</span>
         <button type="button" id="choose">Choose Photos</button>
+      </section>
+
+      <section id="photos" hidden>
+        <header>
+          <span id="count"></span>
+          <button type="button" id="add-more">Add photos</button>
+        </header>
+        <ul id="errors"></ul>
+        <div id="grid"></div>
       </section>
     </main>
   </body>

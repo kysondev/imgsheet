@@ -51,3 +51,44 @@ button {
   cursor: pointer;
 }
 button:hover { filter: brightness(1.08); }
+
+[hidden] { display: none !important; }
+
+#photos header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+#errors {
+  margin: 0 0 16px;
+  padding-left: 20px;
+  color: #c0392b;
+  font-size: 0.85rem;
+}
+#errors:empty { display: none; }
+
+#grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+#grid figure { margin: 0; }
+#grid img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: contain;
+  background: var(--border);
+  border-radius: 6px;
+}
+#grid figcaption {
+  margin-top: 6px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

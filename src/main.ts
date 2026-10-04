@@ -1,10 +1,22 @@
 import { getCurrentWebview } from "@tauri-apps/api/webview";
 import { open } from "@tauri-apps/plugin-dialog";
 import { importPhoto, type AppError, type PhotoInfo } from "./api";
+import {
+  fit,
+  PAGE_POINTS,
+  toPercent,
+  type MarginName,
+  type PageSizeName,
+} from "./layout";
 
 type Photo = PhotoInfo & { path: string };
 
 const photos: Photo[] = [];
+
+const settings: { pageSize: PageSizeName; margin: MarginName } = {
+  pageSize: "letter",
+  margin: "small",
+};
 
 const seen = new Set<string>();
 
@@ -54,7 +66,7 @@ async function addPhotos(paths: string[]) {
       const info = await importPhoto(path);
       const photo: Photo = { ...info, path };
       photos.push(photo);
-      grid.appendChild(makeTile(photo));
+      grid.appendChild(makeTile(photo, photos.length));
       count.textContent =
         photos.length + (photos.length === 1 ? " page" : " pages");
     } catch (e) {
@@ -69,17 +81,35 @@ async function addPhotos(paths: string[]) {
   }
 }
 
-function makeTile(photo: Photo): HTMLElement {
+function makeTile(photo: Photo, number: number): HTMLElement {
   const tile = document.createElement("figure");
+
+  const page = document.createElement("div");
+  page.className = "page";
+  const [pageW, pageH] = PAGE_POINTS[settings.pageSize];
+  page.style.aspectRatio = pageW + " / " + pageH;
 
   const img = document.createElement("img");
   img.src = photo.thumb;
   img.alt = photo.name;
+  const place = fit(
+    settings.pageSize,
+    settings.margin,
+    photo.width,
+    photo.height,
+  );
+  Object.assign(img.style, toPercent(place, settings.pageSize));
+
+  const badge = document.createElement("span");
+  badge.className = "badge";
+  badge.textContent = String(number);
+
+  page.append(img, badge);
 
   const caption = document.createElement("figcaption");
-  caption.textContent = photo.name + " · " + photo.width + "×" + photo.height;
+  caption.textContent = photo.name;
 
-  tile.append(img, caption);
+  tile.append(page, caption);
   return tile;
 }
 

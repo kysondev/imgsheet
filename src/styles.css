@@ -104,20 +104,39 @@ button:hover {
 
 #grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 20px 16px;
 }
 
 #grid figure {
   margin: 0;
 }
-#grid img {
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  object-fit: contain;
-  background: var(--border);
-  border-radius: 6px;
+
+.page {
+  position: relative;
+  background: #fff;
+  border-radius: 3px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
 }
+.page img {
+  position: absolute;
+  display: block;
+}
+
+.badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  min-width: 22px;
+  padding: 2px 6px;
+  border-radius: 11px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
 #grid figcaption {
   margin-top: 6px;
   font-size: 0.75rem;

@@ -1,9 +1,12 @@
+import { getCurrentWebview } from "@tauri-apps/api/webview";
 import { open } from "@tauri-apps/plugin-dialog";
 import { importPhoto, type AppError, type PhotoInfo } from "./api";
 
 type Photo = PhotoInfo & { path: string };
 
 const photos: Photo[] = [];
+
+const seen = new Set<string>();
 
 function byId(id: string): HTMLElement {
   const element = document.getElementById(id);
@@ -44,7 +47,8 @@ async function addPhotos(paths: string[]) {
   photosScreen.hidden = false;
 
   for (const path of sorted) {
-    if (photos.some((photo) => photo.path === path)) continue; // already added
+    if (seen.has(path)) continue; // already added or loading
+    seen.add(path);
 
     try {
       const info = await importPhoto(path);
@@ -54,6 +58,7 @@ async function addPhotos(paths: string[]) {
       count.textContent =
         photos.length + (photos.length === 1 ? " page" : " pages");
     } catch (e) {
+      seen.delete(path); // so they can try this file again
       showError(fileNameOf(path), e as AppError);
     }
   }
@@ -83,6 +88,18 @@ function showError(name: string, error: AppError) {
   line.textContent = name + ": " + error.code + " (" + error.detail + ")";
   errorList.appendChild(line);
 }
+
+getCurrentWebview().onDragDropEvent((event) => {
+  const type = event.payload.type;
+  if (type === "enter") {
+    document.body.classList.add("dragging");
+  } else if (type === "leave") {
+    document.body.classList.remove("dragging");
+  } else if (type === "drop") {
+    document.body.classList.remove("dragging");
+    addPhotos(event.payload.paths);
+  }
+});
 
 byId("choose").addEventListener("click", choosePhotos);
 byId("add-more").addEventListener("click", choosePhotos);
